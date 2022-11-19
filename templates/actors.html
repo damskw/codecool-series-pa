@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+{% block title %}20 actors{% endblock %}
+{% block content %}
+    <div class="card">
+        <h2>Actors</h2>
+        <table>
+            <tr>
+                <th>Actor</th>
+                <th>Button</th>
+            </tr>
+            {% for actor in actors %}
+                <tr>
+                    <td>{{ actor.name }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal" id="get-genres" data-actor-id="{{ actor.id }}">
+                            View genres
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

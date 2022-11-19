@@ -2,11 +2,13 @@ from flask import Flask, render_template, url_for
 from data import queries
 import math
 from dotenv import load_dotenv
+from util import json_response
 
 load_dotenv()
 app = Flask('codecool_series')
 SHOWS_PER_PAGE = 15
-SHOWN_PAGE_NUMBERS = 5 # should be odd to have a symmetry in pagination
+SHOWN_PAGE_NUMBERS = 5  # should be odd to have a symmetry in pagination
+
 
 @app.route('/')
 def index():
@@ -53,6 +55,18 @@ def shows(page_number=1, order_by="rating", order="DESC"):
     )
 
 
+@json_response
+@app.route('/api/actor/<actor_id>/genres')
+def get_actor_genres(actor_id):
+    return queries.get_genres_by_actor_id(actor_id)
+
+
+@app.route('/actors')
+def show_actors():
+    actors = queries.get_actors()
+    return render_template('actors.html', actors=actors)
+
+
 @app.route('/show/<int:id>/')
 def show(id):
     show = queries.get_show(id)
@@ -65,11 +79,11 @@ def show(id):
 
     # getting trailer id from URL to embed video
     show['trailer_id'] = \
-        show['trailer'][show['trailer'].find('=')+1:] if show['trailer'] else ''
+        show['trailer'][show['trailer'].find('=') + 1:] if show['trailer'] else ''
 
     # format runtime
     hours, minutes = divmod(show['runtime'], 60)
-    runtime_str = (str(hours)+'h ' if hours else '') + (str(minutes)+'min' if minutes else '')
+    runtime_str = (str(hours) + 'h ' if hours else '') + (str(minutes) + 'min' if minutes else '')
     show['runtime_str'] = runtime_str
 
     return render_template('show.html', show=show, seasons=seasons)
